@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nolol</title>
+    <style>
+        :root {
+            /* Light mode (default) */
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --header-bg: #4a6fa5;
+            --header-text: white;
+            --section-bg: white;
+            --section-shadow: rgba(0, 0, 0, 0.1);
+            --chat-bg: #f5f5f5;
+            --friend-message-bg: #e5e5ea;
+            --your-message-bg: #4a6fa5;
+            --your-message-text: white;
+            --reason-bg: #f8f9fa;
+            --generator-bg: #f8f9fa;
+            --response-bg: #e9f7ef;
+            --footer-bg: #333;
+            --footer-text: white;
+            --input-border: #ddd;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --header-bg: #2a3950;
+            --header-text: #f0f0f0;
+            --section-bg: #1e1e1e;
+            --section-shadow: rgba(0, 0, 0, 0.3);
+            --chat-bg: #2d2d2d;
+            --friend-message-bg: #3d3d3d;
+            --your-message-bg: #304667;
+            --your-message-text: #f0f0f0;
+            --reason-bg: #2d2d2d;
+            --generator-bg: #2d2d2d;
+            --response-bg: #253831;
+            --footer-bg: #1a1a1a;
+            --footer-text: #e0e0e0;
+            --input-border: #444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            text-align: center;
+            padding: 3rem 1rem;
+            position: relative;
+        }
+
+        /* Theme Switch Styles */
+        .theme-switch-wrapper {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .theme-icon {
+            font-size: 1.2rem;
+        }
+
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            background-color: var(--section-bg);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px var(--section-shadow);
+        }
+
+        h2 {
+            color: #4a6fa5;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        h3 {
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .chat-example {
+            background-color: var(--chat-bg);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            margin-bottom: 0.5rem;
+            max-width: 80%;
+        }
+
+        .friend {
+            background-color: var(--friend-message-bg);
+            align-self: flex-start;
+        }
+
+        .you {
+            background-color: var(--your-message-bg);
+            color: var(--your-message-text);
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .you.better {
+            background-color: #5cb85c;
+        }
+
+        .you.proper {
+            background-color: #9c27b0;
+        }
+
+        .reaction {
+            position: absolute;
+            bottom: -15px;
+            right: 20px;
+            font-size: 2rem;
+        }
+
+        .reasons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 1.5rem;
+        }
+
+        .reason {
+            flex: 1 1 250px;
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--reason-bg);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .reason:hover {
+            transform: translateY(-5px);
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .alternatives-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .alternative {
+            flex: 1 1 300px;
+        }
+
+        .proper-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .proper-example {
+            flex: 1 1 300px;
+        }
+
+        .generator {
+            background-color: var(--generator-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #message-type {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--input-border);
+            margin-right: 1rem;
+            background-color: var(--section-bg);
+            color: var(--text-color);
+        }
+
+        #generate-btn {
+            padding: 0.5rem 1.5rem;
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        #generate-btn:hover {
+            background-color: #3a5a80;
+        }
+
+        #response-output {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--response-bg);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .reasons, .alternatives-container {
+                flex-direction: column;
+            }
+            
+            .theme-switch-wrapper {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: center;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Nolol</div>
+        <h1>Stop Using "LOL" as a Read Receipt</h1>
+        <p class="tagline">Because your conversations deserve better</p>
+        <div class="theme-switch-wrapper">
+            <span class="theme-icon">☀️</span>
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" />
+                <div class="slider round"></div>
+            </label>
+            <span class="theme-icon">🌙</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="problem">
+            <h2>The Problem</h2>
+            <div class="chat-example">
+                <div class="message friend">Hey, I just got a promotion at work!</div>
+                <div class="message you">lol</div>
+                <div class="reaction">😕</div>
+            </div>
+            <p>Using "lol" as a simple acknowledgment can make it seem like you're dismissing someone's message or not really engaged in the conversation.</p>
+        </section>
+
+        <section class="why-section">
+            <h2>Why "LOL" Falls Short</h2>
+            <div class="reasons">
+                <div class="reason">
+                    <div class="icon">😶</div>
+                    <h3>It's Ambiguous</h3>
+                    <p>Was something funny? Are you acknowledging? Are you being dismissive?</p>
+                </div>
+                <div class="reason">
+                    <div class="icon">🔄</div>
+                    <h3>Conversation Killer</h3>
+                    <p>It often leads nowhere, creating dead-end conversations</p>
+                </div>
+                <div class="reason">
+                    <div class="icon">💔</div>
+                    <h3>Lacks Empathy</h3>
+                    <p>It fails to connect with the emotional content of messages</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="alternatives">
+            <h2>Better Alternatives</h2>
+            <div class="alternatives-container">
+                <div class="alternative">
+                    <h3>For Good News</h3>
+                    <div class="chat-example">
+                        <div class="message friend">Hey, I just got a promotion at work!</div>
+                        <div class="message you better">That's awesome! Congrats! 🎉</div>
+                        <div class="reaction">😄</div>
+                    </div>
+                </div>
+                <div class="alternative">
+                    <h3>For Sharing Information</h3>
+                    <div class="chat-example">
+                        <div class="message friend">I just found this great new coffee shop near my place</div>
+                        <div class="message you better">Oh nice! What's it called? Would love to check it out sometime</div>
+                        <div class="reaction">😊</div>
+                    </div>
+                </div>
+                <div class="alternative">
+                    <h3>For Tough Situations</h3>
+                    <div class="chat-example">
+                        <div class="message friend">Having a really rough day at work today...</div>
+                        <div class="message you better">I'm sorry to hear that. Want to talk about it?</div>
+                        <div class="reaction">🙏</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="proper-usage">
+            <h2>When "LOL" Is Actually Appropriate</h2>
+            <p>While we shouldn't use "lol" as a lazy read receipt, there are legitimate times when it's the perfect response:</p>
+            
+            <div class="proper-examples">
+                <div class="proper-example">
+                    <h3>For Actually Funny Content</h3>
+                    <div class="chat-example">
+                        <div class="message friend">I just tried to take a panorama of my dog and he ran halfway through - now he looks like a weird furry noodle 🐕</div>
+                        <div class="message you proper">LOL! That's hilarious! You have to show me this masterpiece 😂</div>
+                        <div class="reaction">🤣</div>
+                    </div>
+                </div>
+
+                <div class="proper-example">
+                    <h3>To Soften a Message</h3>
+                    <div class="chat-example">
+                        <div class="message friend">Can you help me move this weekend?</div>
+                        <div class="message you proper">You're really making me earn that friendship lol. What time should I be there?</div>
+                        <div class="reaction">😏</div>
+                    </div>
+                </div>
+
+                <div class="proper-example">
+                    <h3>To Signal Playful Sarcasm</h3>
+                    <div class="chat-example">
+                        <div class="message friend">Just finished a 5K! Only tripped twice!</div>
+                        <div class="message you proper">Olympic material lol. But seriously, congrats on finishing!</div>
+                        <div class="reaction">👍</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="interactive">
+            <h2>Response Generator</h2>
+            <p>Try our response generator for better conversation starters than "lol":</p>
+            <div class="generator">
+                <select id="message-type">
+                    <option value="good-news">Good News</option>
+                    <option value="bad-news">Bad News</option>
+                    <option value="question">Question</option>
+                    <option value="funny">Funny Story</option>
+                    <option value="achievement">Achievement</option>
+                </select>
+                <button id="generate-btn">Generate Better Response</button>
+                <div id="response-output">Click to see a better response than "lol"</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Made with ❤️ for better conversations</p>
+        <p>Remember: Communication is about connection, not just acknowledgment</p>
+        <p>Made for Phenergi (Sometimes called Xytis)</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateBtn = document.getElementById('generate-btn');
+            const responseOutput = document.getElementById('response-output');
+            const messageType = document.getElementById('message-type');
+            const toggleSwitch = document.querySelector('#checkbox');
+            const htmlElement = document.documentElement;
+
+            // Check for saved theme preference or use user's system preference
+            const currentTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply saved theme on page load
+            if (currentTheme === 'dark') {
+                htmlElement.setAttribute('data-theme', 'dark');
+                toggleSwitch.checked = true;
+            }
+
+            // Switch theme when toggle is clicked
+            function switchTheme(e) {
+                if (e.target.checked) {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+
+            // Event listener for theme switch
+            toggleSwitch.addEventListener('change', switchTheme);
+
+            // Response templates for different message types
+            const responseTemplates = {
+                'good-news': [
+                    "That's fantastic news! I'm so happy for you! ",
+                    "Wow, that's awesome! Tell me more about it!",
+                    "I'm genuinely thrilled to hear that! You deserve it.",
+                    "That's something worth celebrating! How are you feeling?",
+                    "This makes my day! I'm so proud of you! "
+                ],
+                'bad-news': [
+                    "I'm really sorry to hear that. Is there anything I can do to help?",
+                    "That sounds tough. I'm here for you if you need to talk more about it.",
+                    "I can imagine how difficult that must be. Remember you're not alone in this.",
+                    "Sending you support and strength during this time. ",
+                    "Thank you for sharing that with me. How are you holding up?"
+                ],
+                'question': [
+                    "That's an interesting question! I think...",
+                    "Great question! From my perspective...",
+                    "I've been thinking about something similar recently. My take is...",
+                    "Let me give that some thought... How about we consider...",
+                    "I'd love to discuss this more! My initial thoughts are..."
+                ],
+                'funny': [
+                    "Haha! That actually made me laugh out loud! ",
+                    "Oh my goodness, that's hilarious!  What happened next?",
+                    "I can totally picture that! Thanks for the laugh!",
+                    "That's comedy gold! You always have the best stories.",
+                    "I'm literally smiling at my screen right now! Tell me more!"
+                ],
+                'achievement': [
+                    "That's such an impressive achievement! How long have you been working toward this?",
+                    "You should be incredibly proud of yourself! This is what dedication looks like.",
+                    "This is absolutely amazing news! Your hard work is really paying off! ",
+                    "What an accomplishment! I'd love to hear more about the journey.",
+                    "You're such an inspiration! Seriously, congratulations on this milestone! "
+                ]
+            };
+
+            // Animation for new response
+            function animateResponse() {
+                responseOutput.style.opacity = 0;
+                
+                setTimeout(() => {
+                    const selectedType = messageType.value;
+                    const responses = responseTemplates[selectedType];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    
+                    responseOutput.textContent = randomResponse;
+                    responseOutput.style.opacity = 1;
+                }, 300);
+            }
+
+            generateBtn.addEventListener('click', animateResponse);
+
+            // Add subtle animations to sections when scrolling
+            const sections = document.querySelectorAll('section');
+            
+            const observerOptions = {
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            sections.forEach(section => {
+                section.style.opacity = 0;
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
